@@ -23,6 +23,7 @@ function handleProjects(projects) {
         const image = document.createElement('img');
         image.src = project.imageUrl;
         image.alt = project.title;
+        
 
         // Créez un élément figcaption et définissez le contenu du texte à partir des données du projet
         const figcaption = document.createElement('figcaption');
@@ -32,6 +33,8 @@ function handleProjects(projects) {
 
         // Définissez l'attribut data-category-id sur le categoryId du projet
         figure.dataset.categoryId = project.categoryId;
+        figure.dataset.imageId = project.id;
+
 
         // Ajouter l'image et la légende à la figure
         figure.appendChild(image);

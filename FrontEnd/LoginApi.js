@@ -31,7 +31,12 @@ const loginForm = document.getElementById('login-form');
           console.log(data);
           if (data.userId && data.token) {
             // Connexion réussie (couple Email + mdp corrects) rediréction vers la page du site sans boutons de connexion pour l'instant
-            window.location.href = 'index.html';
+            window.location.href = 'index2.html#portfolio';
+            // const editButton = document.getElementById('edit-projects-button');
+            // editButton.style.display = 'block';
+            // const editButton = document.getElementById("edit-projects-button");
+            // editButton.style.display = 'block';
+            
           } else {
             // Echec de Connexion, affichage de message d'erreur
             
