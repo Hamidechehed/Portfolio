@@ -1,6 +1,11 @@
 const loginForm = document.getElementById('login-form');
     loginForm.addEventListener('submit', handleLogin);
 
+    // Function to set the token in client-side storage
+    function setToken(token) {
+        localStorage.setItem('accessToken', token); // Assuming you store the token in localStorage
+      }
+
     function handleLogin(event) {
       event.preventDefault(); // Bloque l'envoie du formulaire formulaire 
 
@@ -28,6 +33,8 @@ const loginForm = document.getElementById('login-form');
         .then(response => response.json())
         .then(data => {
           // Gestion de la réponse de l'API
+          const token = data.token;
+          setToken(token);
           console.log(data);
           if (data.userId && data.token) {
             // Connexion réussie (couple Email + mdp corrects) rediréction vers la page du site sans boutons de connexion pour l'instant

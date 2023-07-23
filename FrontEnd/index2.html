@@ -37,7 +37,7 @@
           </article>
         </div>
         <div class="edit-button-container">
-          <button type="button" id="openModalBtn" class="btn btn-default btn-sm">
+          <button type="button" id="edit-projects-button" class="btn btn-default btn-sm">
             <span class="glyphicon glyphicon-edit"></span> modifier
           </button>
         </div>
@@ -45,7 +45,7 @@
     <section id="portfolio">
         <div class="ButtonEdit">
             <h2>Mes Projets</h2>
-            <button type="button" id="edit-projects-button" class="btn btn-default btn-sm">
+            <button type="button" id="openModalBtn" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-edit"></span> modifier
             </button>
         </div>
@@ -78,11 +78,11 @@
         <span class="close">&times;</span>
         <h2>Galerie Photo</h2>
         <div id="modalImages">
-            <!-- Images will be added dynamically here -->
+            <!-- Les images seront ajoutées dynamiquement ici -->
         </div>
         <button id="addPhotoBtn" class="btn btn-success btn-sm">Ajouter une photo</button>
 
-        <!-- The form modal -->
+        <!-- Formulaire modal -->
         <div id="formModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -98,7 +98,7 @@
                     <input type="text" id="projectName" name="projectName" required>
                     <label for="categorySelect">Catégorie:</label>
                     <select id="categorySelect" name="categorySelect" required>
-                    <!-- Options for categories will be added dynamically using JavaScript -->
+                    <!-- Les options pour les catégories seront ajoutées dynamiquement à l'aide de JavaScript-->
                     </select>
                     <input type="submit" value="Ajouter">
                 </form>

@@ -1,42 +1,42 @@
 // // // JavaScript for the modal
 
-// Get the modal element
+// Obtenir l'élément modal
 const modal = document.getElementById('galleryModal');
 
-// Get the modal content element
+// Obtenir le contenu de l'élément modal
 const modalContent = document.querySelector('.modal-content');
 
-// Get the button that opens the modal
+// Obtenir le boutton qui ouvre le modal
 const editButton = document.getElementById('openModalBtn');
 
-// Get the close button for the modal
+// Obtenir le bouton fermeture
 const closeButton = document.querySelector('.close');
 
-// Get the add photo button inside the modal
+// Obtenir le boutton Ajout photo 
 const addPhotoBtn = document.getElementById('addPhotoBtn');
 
-// Get the delete gallery link inside the modal
+// Obtenir le lien supprimer gallerie 
 const deleteGalleryLinkContainer = document.querySelector('.delete-gallery-container');
 
-// Event listener to open the modal when the "Modifier" button is clicked
+// Ouverture du modal quand le bouton "Modifier" est clické
 editButton.addEventListener('click', openModal);
 
-// Event listener to close the modal when the close button is clicked
+// Femeture du modal quand le bouton fermeture est clické
 closeButton.addEventListener('click', closeModal);
 
-// Event listener to close the modal when clicking outside the modal content
+// Femeture du modal quand l'exterieur du modal est clické
 window.addEventListener('click', outsideClick);
 
-// Function to open the modal
+// Ouverture du modal
 function openModal() {
-  // Show the modal
+  // Montrer le modal
   modal.style.display = 'block';
 
-  // Fetch works data and update the modal content
+  // Appel de l'API Fetch works data and update the modal content
   fetch('http://localhost:5678/api/works')
     .then(response => response.json())
     .then(data => {
-      // Call a function to handle the retrieved works data and display them in the modal
+      // Appelez une fonction pour gérer les données de travaux récupérées et affichez-les dans le modal
       displayWorksInModal(data);
     })
     .catch(error => {
@@ -44,13 +44,13 @@ function openModal() {
     });
 }
 
-// Function to close the modal
+// Fonction pour fermer le modal
 function closeModal() {
   // Hide the modal
   modal.style.display = 'none';
 }
 
-// Function to close the modal if clicked outside the modal content
+// Fonction pour fermer le modal si cliqué en dehors du contenu modal
 function outsideClick(e) {
   if (e.target === modal) {
     closeModal();
@@ -58,61 +58,90 @@ function outsideClick(e) {
 }
 
 function deleteGallery() {
-    // Add your logic here to handle deleting the entire gallery
-    // For example, you can show a confirmation dialog and then delete all images
+
+    // Delete gallery non codé car sinon supprime tous les travaux, mais suffit de faire une boucle sur la fonction deleteWork()
     console.log('Supprimer la galerie clicked');
 
-    // Clear the modalImagesContainer to remove all image elements from the modal
+    // Effacez le modalImagesContainer pour supprimer tous les éléments d'image du modal
     const modalImagesContainer = document.getElementById('modalImages');
     modalImagesContainer.innerHTML = '';
 
-    // To close the modal after deleting the gallery, you can call the closeModal function
+    // Pour fermer le modal après avoir supprimé la galerie, vous pouvez appeler la fonction closeModal
     closeModal();
 
-    // Call a function to delete all images from the gallery in index2.html
+    // Appelez une fonction pour supprimer toutes les images de la galerie dans index2.html
     deleteAllImagesInGallery();
 }
 
-// Function to delete all images from the gallery in index2.html
+// Fonction pour supprimer toutes les images de la galerie dans index2.html
 function deleteAllImagesInGallery() {
-  // Fetch all the image containers in the gallery
+  // Récupérer tous les conteneurs d'images dans la galerie
   const galleryImages = document.querySelectorAll('#project-gallery figure');
 
-  // Remove each image container from the gallery
+  // Supprimer chaque conteneur d'images de la galerie
   galleryImages.forEach(imageContainer => {
     imageContainer.remove();
   });
 }
 
+async function deleteWork(workId) {
+    const myToken = getToken(); // Récupérer le jeton du stockage côté client
+
+    try {
+        // console.log("essai de suppression");
+        const response = await fetch(`http://localhost:5678/api/works/${workId}`, {
+            method: 'DELETE',
+            headers: {
+                'accept': '*/*',
+                'Authorization': `Bearer ${myToken}`,
+            },
+        });
+
+        if (response.ok) {
+            alert('Projet supprimé avec succès !');
+            // Optionally, you can also remove the deleted work from the UI
+            const deletedWork = document.querySelector(`[data-image-id="${workId}"]`);
+            if (deletedWork) {
+                deletedWork.remove();
+            }
+        } else {
+            alert("Une erreur s'est produite lors de la suppression de l'œuvre.");
+        }
+    } catch (error) {
+        console.error('Erreur:', error);
+    }
+}
+
+
 function displayWorksInModal(works) {
     const modalImagesContainer = document.getElementById('modalImages');
     modalImagesContainer.innerHTML = '';
   
-    // Loop through the works and create image elements for each work
+    // Parcourez les œuvres et créez des éléments d'image pour chaque œuvre
     works.forEach((work) => {
-      // Create a new image element
+      // Créer un nouvel élément d'image
       const imageElement = document.createElement('img');
       imageElement.src = work.imageUrl;
       imageElement.alt = work.title;
       imageElement.classList.add('modal-image');
-      imageElement.dataset.imageId = work.id; // Set the data-image-id attribute
+      imageElement.dataset.imageId = work.id; // Définir l'attribut data-image-id
   
-      // Create a div element to hold the image and delete icon
+      // Créez un élément div pour contenir l'image et supprimer l'icône
       const imageContainer = document.createElement('div');
       imageContainer.classList.add('image-container');
 
   
-      // Create the delete icon for each image
+      // Créer l'icône de suppression pour chaque image
       const deleteIcon = document.createElement('span');
       deleteIcon.classList.add('delete-icon');
-      deleteIcon.innerHTML = '&times;';
+      deleteIcon.innerHTML = '<svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.6 1.8V0.9C6.6 0.402944 6.19704 0 5.7 0H3.3C2.80294 0 2.4 0.402944 2.4 0.9V1.8H0V2.4H0.6V8.1C0.6 8.59704 1.00294 9 1.5 9H7.5C7.99704 9 8.4 8.59704 8.4 8.1V2.4H9V1.8H6.6ZM3 0.9C3 0.734316 3.13432 0.6 3.3 0.6H5.7C5.86568 0.6 6 0.734316 6 0.9V1.8H3V0.9ZM4.2 4.2V7.2H4.8V4.2H4.2ZM2.4 7.2V5.4H3V7.2H2.4ZM6 5.4V7.2H6.6V5.4H6Z" fill="white"/></svg>';
   
-      // Add a click event listener to the delete icon to remove the image from the modal
+      // Ajoutez un écouteur d'événement de clic à l'icône de suppression pour supprimer l'image du modal
       deleteIcon.addEventListener('click', () => {
-        // Remove the image container from the modalImages container
+        // Supprimer le conteneur d'image du conteneur modalImages
         modalImagesContainer.removeChild(imageContainer);
 
-        // Also remove the image from the 'project-gallery' in index2.html
+        // Supprimez également l'image de la 'project-gallery' dans index2.html
         const projectGallery = document.getElementById('project-gallery');
         const imageIdToDelete = imageElement.dataset.imageId;
         const imageToDelete = projectGallery.querySelector(`[data-image-id="${imageIdToDelete}"]`);
@@ -120,28 +149,29 @@ function displayWorksInModal(works) {
             projectGallery.removeChild(imageToDelete);
         }
 
+        // Envoyez également une requête API pour supprimer l'image
+        deleteWork(imageIdToDelete);
       });
   
-      // Append the image and delete icon to the image container
+      // Ajouter l'image et l'icône de suppression au conteneur d'images
       imageContainer.appendChild(imageElement);
       imageContainer.appendChild(deleteIcon);
   
-      // Append the image container to the modalImages container
+      // Ajouter le conteneur d'image au conteneur modalImages
       modalImagesContainer.appendChild(imageContainer);
     });
   
-    // Add the "Ajouter une photo" button and "Supprimer la galerie" button to the modal
+    // Ajouter le bouton "Ajouter une photo" et le bouton "Supprimer la galerie" au modal
     const addPhotoButton = document.getElementById('addPhotoBtn');
     addPhotoButton.addEventListener('click', () => {
-      // Add your logic here to handle adding a new photo
-      // For example, you can open a form in the modal to add a new photo
+      
       console.log('Ajouter une photo button clicked');
     });
   
-    // Add the "Supprimer la galerie" button to the modal
+    
     const deleteGalleryBtn = document.getElementById('deleteGalleryBtn');
     deleteGalleryBtn.addEventListener('click', () => {
-      // Call a function to handle deleting the entire gallery
+      
       deleteGallery();
     });
   
@@ -150,17 +180,17 @@ function displayWorksInModal(works) {
   
 // -----------------------------------------------------------------------------------------------------------------
 
-// Function to fetch categories from the API and populate the drop-down selector
+// Fonction pour récupérer les catégories de l'API et remplir le sélecteur déroulant
 function fetchAndPopulateCategories() {
     fetch('http://localhost:5678/api/categories')
       .then(response => response.json())
       .then(data => {
         const categorySelect = document.getElementById('categorySelect');
         
-        // Clear any existing options
+       //Effacer toutes les options existantes
         categorySelect.innerHTML = '';
   
-        // Add the new options
+        // Ajout des nouvelles options
         data.forEach(category => {
           const option = document.createElement('option');
           option.value = category.id;
@@ -173,67 +203,115 @@ function fetchAndPopulateCategories() {
       });
   }
 
-// modal.js
 
-// ... (previously defined functions)
 
-// Get the button that opens the form modal
+// Obtenir le bouton qui ouvre le formulaire modal
 const openFormButton = document.getElementById('addPhotoBtn');
 
-// Get the form modal element
+// Obtenir l'élément modal du formulaire
 const formModal = document.getElementById('formModal');
 
-// Get the close button for the form modal
+// Obtenir le bouton de fermeture du formulaire modal
 const closeFormButton = formModal.querySelector('.close');
 
-// Event listener to open the form modal when the "Ajouter un projet" button is clicked
+// Event listener pour ouvrir le modal du formulaire lors du clic sur le bouton "Ajouter un projet"
 openFormButton.addEventListener('click', () => { 
     openFormModal();
     fetchAndPopulateCategories();
 });
 
-// Event listener to close the form modal when the close button is clicked
+// Écouteur d'événement pour fermer le formulaire modal lorsque le bouton de fermeture est cliqué
 closeFormButton.addEventListener('click', closeFormModal);
 
-// Event listener to close the form modal if clicked outside the form modal content
+// Écouteur d'événement pour fermer le formulaire modal si vous cliquez en dehors du contenu modal du formulaire
 window.addEventListener('click', outsideFormClick);
 
-// Function to open the form modal
+// Fonction pour ouvrir le formulaire modal
 function openFormModal() {
-  // Show the form modal
   formModal.style.display = 'block';
 }
 
-// Function to close the form modal
+// Fonction pour fermer le formulaire modal
 function closeFormModal() {
-  // Hide the form modal
   formModal.style.display = 'none';
 }
 
-// Function to close the form modal if clicked outside the form modal content
+// Fonction pour fermer le formulaire modal si cliqué en dehors du contenu modal du formulaire
 function outsideFormClick(e) {
   if (e.target === formModal) {
     closeFormModal();
   }
 }
 
-// Form submission event listener
+// Écouteur d'événement de soumission de formulaire
 const addProjectForm = document.getElementById('addProjectForm');
 addProjectForm.addEventListener('submit', handleFormSubmission);
 
-// Function to handle form submission
+// Fonction pour gérer la soumission de formulaire
 function handleFormSubmission(event) {
   event.preventDefault();
 
-  // Get form inputs
+  // Obtenir des entrées de formulaire
   const projectImage = document.getElementById('projectImage').files[0];
   const projectName = document.getElementById('projectName').value;
   const categorySelect = document.getElementById('categorySelect');
   const categoryId = categorySelect.value;
 
-  // Add your logic here to handle the form submission
-  // For example, you can use FormData to construct the form data and send it to the server using fetch
-
-  // After successful submission, close the form modal
   closeFormModal();
 }
+
+
+
+// -------------------------------------------------------------------------------------------------------------------------------
+
+function getToken() {
+    return localStorage.getItem('accessToken'); 
+  }
+
+// Fonction pour gérer la soumission de formulaire
+async function handleFormSubmit(event) {
+    event.preventDefault(); 
+    
+    
+    const projectName = document.getElementById('projectName').value;
+    const imageInput = document.getElementById('projectImage');
+    const imageFile = imageInput.files[0];
+  
+    if (!projectName || !imageFile) {
+      alert('Veuillez remplir tous les champs.');
+      return;
+    }
+  
+    const categoryId = document.getElementById('categorySelect').value;
+  
+    const formData = new FormData();
+    formData.append('title', projectName);
+    formData.append('categoryId', categoryId);
+    formData.append('imageUrl', imageFile);
+    
+  
+    try {
+        const myToken = getToken(); // Récupérer le jeton du stockage côté client
+        const response = await fetch('http://localhost:5678/api/works', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${myToken}`
+          },
+        body: formData
+      });
+  
+      if (response.ok) {
+        alert('Projet ajouté avec succès !');
+        closeModal(); 
+        document.getElementById('addProjectForm').reset(); // Effacer le formulaire
+      } else {
+        alert('Une erreur est survenue lors de l\'ajout du projet.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+  
+  // Joindre le gestionnaire de soumission de formulaire au formulaire
+  
+  addProjectForm.addEventListener('submit', handleFormSubmit);
