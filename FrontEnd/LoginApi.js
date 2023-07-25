@@ -1,9 +1,9 @@
 const loginForm = document.getElementById('login-form');
     loginForm.addEventListener('submit', handleLogin);
 
-    // Function to set the token in client-side storage
+    // Fonction qui ajoute le token au stockage local
     function setToken(token) {
-        localStorage.setItem('accessToken', token); // Assuming you store the token in localStorage
+        localStorage.setItem('accessToken', token); // Stock le token dans le stockage locale
       }
 
     function handleLogin(event) {

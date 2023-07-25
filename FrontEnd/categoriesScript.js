@@ -79,7 +79,7 @@ function removeFilters() {
     // Afficher toutes les images du projet
     const projectImages = document.querySelectorAll('.gallery figure');
     projectImages.forEach(image => {
-        image.style.display = 'block';
+        image.style.display = 'block'; // Mets en block (photos affichées) toutes les photos 
     });
 }
 

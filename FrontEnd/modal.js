@@ -1,4 +1,3 @@
-// // // JavaScript for the modal
 
 // Obtenir l'élément modal
 const modal = document.getElementById('galleryModal');
@@ -85,7 +84,7 @@ function deleteAllImagesInGallery() {
 }
 
 async function deleteWork(workId) {
-    const myToken = getToken(); // Récupérer le jeton du stockage côté client
+    const myToken = getToken(); // Récupérer le token du stockage côté client
 
     try {
         // console.log("essai de suppression");
@@ -214,7 +213,7 @@ const formModal = document.getElementById('formModal');
 // Obtenir le bouton de fermeture du formulaire modal
 const closeFormButton = formModal.querySelector('.close');
 
-// Event listener pour ouvrir le modal du formulaire lors du clic sur le bouton "Ajouter un projet"
+// Event listener pour ouvrir le modal du formulaire lors du clic sur le bouton "Ajouter une photo"
 openFormButton.addEventListener('click', () => { 
     openFormModal();
     fetchAndPopulateCategories();
