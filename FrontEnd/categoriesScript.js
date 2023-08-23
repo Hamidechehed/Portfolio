@@ -76,6 +76,9 @@ function removeFilters() {
         button.classList.remove('active');
     });
 
+    const removeFiltersButton = document.getElementById('remove-filters-button');
+    removeFiltersButton.classList.add('active');
+
     // Afficher toutes les images du projet
     const projectImages = document.querySelectorAll('.gallery figure');
     projectImages.forEach(image => {

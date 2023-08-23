@@ -61,6 +61,14 @@ function deleteGallery() {
     // Delete gallery non codé car sinon supprime tous les travaux, mais suffit de faire une boucle sur la fonction deleteWork()
     console.log('Supprimer la galerie clicked');
 
+    fetch('http://localhost:5678/api/works')
+    .then(response => response.json())
+    .then(works => {
+      works.forEach((work) => {
+        deleteWork(work.id, false);
+      });
+    })
+
     // Effacez le modalImagesContainer pour supprimer tous les éléments d'image du modal
     const modalImagesContainer = document.getElementById('modalImages');
     modalImagesContainer.innerHTML = '';
@@ -69,7 +77,9 @@ function deleteGallery() {
     closeModal();
 
     // Appelez une fonction pour supprimer toutes les images de la galerie dans index2.html
-    deleteAllImagesInGallery();
+    //deleteAllImagesInGallery();
+
+    //alert("La galerie a bien été supprimée.");
 }
 
 // Fonction pour supprimer toutes les images de la galerie dans index2.html
@@ -83,7 +93,7 @@ function deleteAllImagesInGallery() {
   });
 }
 
-async function deleteWork(workId) {
+async function deleteWork(workId, displayAlert=true) {
     const myToken = getToken(); // Récupérer le token du stockage côté client
 
     try {
@@ -97,7 +107,9 @@ async function deleteWork(workId) {
         });
 
         if (response.ok) {
-            alert('Projet supprimé avec succès !');
+            if(displayAlert){
+              alert('Projet supprimé avec succès !');
+            }
             // Optionally, you can also remove the deleted work from the UI
             const deletedWork = document.querySelector(`[data-image-id="${workId}"]`);
             if (deletedWork) {
@@ -111,6 +123,49 @@ async function deleteWork(workId) {
     }
 }
 
+function addWorkInModal(modalImagesContainer, work){
+  // Créer un nouvel élément d'image
+  const imageElement = document.createElement('img');
+  imageElement.src = work.imageUrl;
+  imageElement.alt = work.title;
+  imageElement.classList.add('modal-image');
+  imageElement.dataset.imageId = work.id; // Définir l'attribut data-image-id
+
+  // Créez un élément div pour contenir l'image et supprimer l'icône
+  const imageContainer = document.createElement('div');
+  imageContainer.classList.add('image-container');
+
+
+  // Créer l'icône de suppression pour chaque image
+  const deleteIcon = document.createElement('span');
+  deleteIcon.classList.add('delete-icon');
+  deleteIcon.innerHTML = '<svg width="20" height="20" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.6 1.8V0.9C6.6 0.402944 6.19704 0 5.7 0H3.3C2.80294 0 2.4 0.402944 2.4 0.9V1.8H0V2.4H0.6V8.1C0.6 8.59704 1.00294 9 1.5 9H7.5C7.99704 9 8.4 8.59704 8.4 8.1V2.4H9V1.8H6.6ZM3 0.9C3 0.734316 3.13432 0.6 3.3 0.6H5.7C5.86568 0.6 6 0.734316 6 0.9V1.8H3V0.9ZM4.2 4.2V7.2H4.8V4.2H4.2ZM2.4 7.2V5.4H3V7.2H2.4ZM6 5.4V7.2H6.6V5.4H6Z" fill="white"/></svg>';
+
+  // Ajoutez un écouteur d'événement de clic à l'icône de suppression pour supprimer l'image du modal
+  deleteIcon.addEventListener('click', () => {
+    // Supprimer le conteneur d'image du conteneur modalImages
+    modalImagesContainer.removeChild(imageContainer);
+
+    // Supprimez également l'image de la 'project-gallery' dans index2.html
+    const projectGallery = document.getElementById('project-gallery');
+    const imageIdToDelete = imageElement.dataset.imageId;
+    const imageToDelete = projectGallery.querySelector(`[data-image-id="${imageIdToDelete}"]`);
+    if (imageToDelete) {
+        projectGallery.removeChild(imageToDelete);
+    }
+
+    // Envoyez également une requête API pour supprimer l'image
+    deleteWork(imageIdToDelete);
+  });
+
+  // Ajouter l'image et l'icône de suppression au conteneur d'images
+  imageContainer.appendChild(imageElement);
+  imageContainer.appendChild(deleteIcon);
+
+  // Ajouter le conteneur d'image au conteneur modalImages
+  modalImagesContainer.appendChild(imageContainer);
+}
+
 
 function displayWorksInModal(works) {
     const modalImagesContainer = document.getElementById('modalImages');
@@ -118,46 +173,7 @@ function displayWorksInModal(works) {
   
     // Parcourez les œuvres et créez des éléments d'image pour chaque œuvre
     works.forEach((work) => {
-      // Créer un nouvel élément d'image
-      const imageElement = document.createElement('img');
-      imageElement.src = work.imageUrl;
-      imageElement.alt = work.title;
-      imageElement.classList.add('modal-image');
-      imageElement.dataset.imageId = work.id; // Définir l'attribut data-image-id
-  
-      // Créez un élément div pour contenir l'image et supprimer l'icône
-      const imageContainer = document.createElement('div');
-      imageContainer.classList.add('image-container');
-
-  
-      // Créer l'icône de suppression pour chaque image
-      const deleteIcon = document.createElement('span');
-      deleteIcon.classList.add('delete-icon');
-      deleteIcon.innerHTML = '<svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.6 1.8V0.9C6.6 0.402944 6.19704 0 5.7 0H3.3C2.80294 0 2.4 0.402944 2.4 0.9V1.8H0V2.4H0.6V8.1C0.6 8.59704 1.00294 9 1.5 9H7.5C7.99704 9 8.4 8.59704 8.4 8.1V2.4H9V1.8H6.6ZM3 0.9C3 0.734316 3.13432 0.6 3.3 0.6H5.7C5.86568 0.6 6 0.734316 6 0.9V1.8H3V0.9ZM4.2 4.2V7.2H4.8V4.2H4.2ZM2.4 7.2V5.4H3V7.2H2.4ZM6 5.4V7.2H6.6V5.4H6Z" fill="white"/></svg>';
-  
-      // Ajoutez un écouteur d'événement de clic à l'icône de suppression pour supprimer l'image du modal
-      deleteIcon.addEventListener('click', () => {
-        // Supprimer le conteneur d'image du conteneur modalImages
-        modalImagesContainer.removeChild(imageContainer);
-
-        // Supprimez également l'image de la 'project-gallery' dans index2.html
-        const projectGallery = document.getElementById('project-gallery');
-        const imageIdToDelete = imageElement.dataset.imageId;
-        const imageToDelete = projectGallery.querySelector(`[data-image-id="${imageIdToDelete}"]`);
-        if (imageToDelete) {
-            projectGallery.removeChild(imageToDelete);
-        }
-
-        // Envoyez également une requête API pour supprimer l'image
-        deleteWork(imageIdToDelete);
-      });
-  
-      // Ajouter l'image et l'icône de suppression au conteneur d'images
-      imageContainer.appendChild(imageElement);
-      imageContainer.appendChild(deleteIcon);
-  
-      // Ajouter le conteneur d'image au conteneur modalImages
-      modalImagesContainer.appendChild(imageContainer);
+      addWorkInModal(modalImagesContainer, work);
     });
   
     // Ajouter le bouton "Ajouter une photo" et le bouton "Supprimer la galerie" au modal
@@ -259,6 +275,15 @@ function handleFormSubmission(event) {
   closeFormModal();
 }
 
+const projectImage = document.getElementById('projectImage');
+const projectImageDisplayed = document.getElementById('projectImage-img');
+projectImage.onchange = evt => {
+  const [file] = projectImage.files
+  if (file) {
+    projectImageDisplayed.src = URL.createObjectURL(file)
+  }
+}
+
 
 
 // -------------------------------------------------------------------------------------------------------------------------------
@@ -285,8 +310,8 @@ async function handleFormSubmit(event) {
   
     const formData = new FormData();
     formData.append('title', projectName);
-    formData.append('categoryId', categoryId);
-    formData.append('imageUrl', imageFile);
+    formData.append('category', categoryId);
+    formData.append('image', imageFile);
     
   
     try {
@@ -300,9 +325,18 @@ async function handleFormSubmit(event) {
       });
   
       if (response.ok) {
-        alert('Projet ajouté avec succès !');
+        const project = await response.json();
+
+        const modalImagesContainer = document.getElementById('modalImages');
+        addWorkInModal(modalImagesContainer, project);
+
+        addImageInGallery(project);
+
+        document.getElementById('projectImage').value = '';
+        document.getElementById("projectImage-img").src = "assets/images/AjouterPhoto.png";
+        document.getElementById('addProjectForm').reset();
+        alert('Projet ajouté avec succès !'); // Effacer le formulaire
         closeModal(); 
-        document.getElementById('addProjectForm').reset(); // Effacer le formulaire
       } else {
         alert('Une erreur est survenue lors de l\'ajout du projet.');
       }

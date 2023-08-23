@@ -194,19 +194,21 @@ footer nav ul {
 
 .filter-button {
 	
-	background-color: #1D6154;
-	color: #ffffff;
 	border: none;
-	border-radius: 4px;
+	border-radius: 20px;
 	padding: 8px 16px;
 	margin-right: 8px;
 	cursor: pointer;
+    background-color: #FFFFFF; /* Change la couleur du bouton quand celui-ci est activé */
+    color: #1D6154; /* Change la couleur du texte du bouton quand celui-ci est activé */
+	box-shadow: 0 0 0 2px #1D6154; /* Change la couleur du contour du bouton quand celui-ci est activé */
 }
 
   
 .filter-button:hover {
-	background-color: #ffffff;
-	color: #1D6154;
+	background-color: #1D6154;
+	color: #ffffff;
+	box-shadow: 0 0 0 0px #1D6154;
 }
 
 #my-figcaption {
@@ -218,9 +220,9 @@ footer nav ul {
 }
 
 .filter-button.active {
-    background-color: #FFFFFF; /* Change la couleur du bouton quand celui-ci est activé */
-    color: #1D6154; /* Change la couleur du texte du bouton quand celui-ci est activé */
-	box-shadow: 0 0 0 2px #1D6154; /* Change la couleur du contour du bouton quand celui-ci est activé */
+	background-color: #1D6154;
+	color: #ffffff;
+	box-shadow: 0 0 0 0px #1D6154;
 }
 
 .edit-button {
