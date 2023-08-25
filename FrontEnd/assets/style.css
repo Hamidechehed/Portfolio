@@ -98,6 +98,17 @@ nav li {
 li:hover {
 	color: #B1663C;
 }
+
+nav li a {
+	text-decoration: none;
+	color: black;
+	cursor: pointer;
+}
+nav li a:hover {
+	color: #B1663C;
+
+}
+
 #introduction {
 	display: flex;
 	align-items: center;

@@ -48,3 +48,11 @@ function handleProjects(projects) {
         addImageInGallery(project);
     });
 }
+
+
+function logout(){
+    localStorage.removeItem("accessToken");
+    window.location.href = "index.html";
+  }
+const logoutButton = document.getElementById('logout');
+logoutButton.addEventListener('click', logout);
